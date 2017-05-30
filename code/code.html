@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+  <meta charset="utf-8" /> <!-- HTML5 -->
+  <meta http-equiv="content-type" content="text/html; charset=utf-28" /> <!-- HTML 4.x -->
+  <meta http-equiv="expires" content="0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" /> 
+  <style type="text/css"></style>
+  <script type="text/javascript" src="codeFormatter2.js"></script>
+  <title>Source code formatter</title>
+<body>
+
+<h2>Code Formatter</h2>
+
+<h4>Version 0.2</h4>
+<pre class="codeBlock">
+<span>test</span>
+</pre>
+<pre class="codeBlock">
+/**
+ * Main method
+ */
+public static void main(String[] args /* Argumente */) {
+  System.out.println("Hello World"); /** Standardausgabe */
+  System.exit(0); // System code (0) for exit
+}
+</pre>
+</pre>
+<pre class="codeBlock">
+/*
+ * C program
+ */
+#include <stdio.h>
+
+int main(void) {
+  printf("Hello World!\n");
+  return 0;
+}
+</pre>
+<ul>
+  <li>Anzeigen von Zeilennummer.</li>
+  <li>Farbige Formatierung.</li>
+  <li>Unterst&uuml;tzung ein- und mehrzeiliger Kommentare:
+    <ul style="font-family:Monospace; font-size:14px; color:#40F000;">
+      <li>/**<br />
+           &nbsp;* Mehrzeiliger Kommentar<br />
+           &nbsp;*/
+      </li>
+      <li>// Einzeiliger Kommentar</li>
+      <li>/* Einzeiliger Kommentar */</li>
+      <li>/*<br />
+           &nbsp;* Mehrzeiliger Kommentar<br />
+           &nbsp;*/
+      </li>
+    </ul>
+  </li>
+  <li>Sonderzeichen (&lt;, &gt; ...) werden nun erkannt.</li>
+</ul>
+
+<h4>Version 0.1</h4>
+<pre class="codeBlock">
+/**
+ * Main method
+ */
+public static void main(String[] args /* Argumente */) {
+  System.out.println("Hello World"); /** Standardausgabe */
+  System.exit(0); // System code (0) for exit
+}
+</pre>
+<ul>
+  <li>Anzeigen von Zeilennummer.</li>
+  <li>Farbige Formatierung.</li>
+  <li>Unterst&uuml;tzung ein- und mehrzeiliger Kommentare:
+    <ul style="font-family:Monospace; font-size:14px; color:#40F000;">
+      <li>/**<br />
+           &nbsp;* Mehrzeiliger Kommentar<br />
+           &nbsp;*/
+      </li>
+      <li>// Einzeiliger Kommentar</li>
+      <li>/* Einzeiliger Kommentar */</li>
+    </ul>
+  </li>
+  <li style="color:red;">Keine Unterst&uuml;zung f&uuml;r mehrzeile Kommentare der Form:<br />
+    <div style="margin-left:20px;font-family:Monospace;font-size:14px;">
+       /*<br />
+       &nbsp;* Kommentar<br />
+       &nbsp;*/
+    </div>
+  </li>
+  <li style="color:red;">Sonderzeichen (&lt;, &gt; ...) werden nicht erkannt.</li>
+  <li style="color:red;">Keine Hervorhebung von Keywords f&uuml;r Programmiersprachen.</li>
+</ul>
+
+</body>
+</html>
