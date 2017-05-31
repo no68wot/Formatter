@@ -48,10 +48,10 @@ var Formatter = (function (c) {
           parentNode.insertBefore(TAB, g.blocks[i]);
           // Regular expression for code comments. Support: /*..*/ and //
           // Escape star * with double-backslash, i.e. * is like \\*
-          tmp = "//[ ]*.*[\r\n]" // Comments in kind of //..
+          re = "//[ ]*.*[\r\n]" // Comments in kind of //..
               + "|/\\*[ ]*.*[ ]*\\*/" // Comments in kind of /*..*/
               + "|/(\\*)([ ]*\\*[ ]*.*[\r\n])+"; // Many-Lines Comments
-          re = new RegExp(tmp, "gi"); // RegExp object notation ==> langsamer als literal notation
+          re = new RegExp(re, "gi"); // RegExp object notation ==> langsamer als literal notation
           /* https://developer.mozilla.org/de/docs/Web/JavaScript/Guide/Regular_Expressions */
           /* https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/RegExp */
           /* https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/String/replace */

@@ -1,9 +1,14 @@
 /**
- * Code Formatter - Version 0.2
+ * Code Formatter - Version 0.3
  * Soni D.
  */
 
 var Formatter = (function () {
+  var keywords = { /* Keywords of Programming Languages */
+     c          : "auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while",
+     java       : "abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|iplements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while",
+     javascript : ""
+  };
   var g = {
     name          : "pre.codeBlock", /* HTMLElement <pre> and class [codeBlock] */
     blocks        : [], /* List of <pre> blocks */
@@ -16,6 +21,12 @@ var Formatter = (function () {
     reComments    : "//[ ]*.*[ ]*[\r\n]"   // Comments in the kind of //...
                   + "|/\\*[ ]*.*[ ]*\\*/" // Comments in the kind of /* .. */
                   + "|/\\*([ ]*.*[ ]*[\r\n])+[ ]*\\*/", // Many lines comments /** .. */
+    langs         : ["c","java","javascript"], /* Programming Languages */
+    reLangs       : { /* RegExp for Programming Languages */
+       c          : "(\\b(" + keywords.c    + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))" + "|#include",
+       java       : "(\\b(" + keywords.java + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))",
+       javascript : null
+    },
   };
   return {
     init : function () {
@@ -63,7 +74,7 @@ var Formatter = (function () {
           TD.setAttribute("style", tmp);
           TR.appendChild(TD);
           TAB.appendChild(TR);
-        } // END-for
+        } // END-for (lines)
         parentNode.insertBefore(TAB, g.blocks[i]);
         TAB.setAttribute("style", g.cssCodeNumTAB + g.cssCodeFont);
         g.blocks[i].setAttribute("style", g.cssCodeFrame + g.cssCodeFont);
@@ -75,9 +86,22 @@ var Formatter = (function () {
         strCode = strCode.replace(re, function (match, p, offset, string) {
           return "<span style='color:#40ff00;'>" + match + "</span>";
         });
+        /* Highlights keywords of specified programming language */
+        strCode = this.highlight(strCode, g.blocks[i].getAttribute("class").split(" "));
+        // Returns formatted code
         g.blocks[i].innerHTML = strCode;
-      } // END-for
+      } // END-for (code blocks)
     }, // format
+    highlight : function (strCode /* string */, arr /* array of attributes */) {
+      if ( arr.length < 2 ) return strCode;
+      var k = 0, re = null;
+      while ( arr[1] !== g.langs[k] && k < g.langs.length ) { k += 1; }
+      if ( k === g.langs.length ) return strCode;
+      re = new RegExp(g.reLangs[g.langs[k]], "g");
+      return strCode.replace(re, function (match, p, offset, string) {
+        return "<span style='color:#FFFF00; font-weight:600; text-shadow:0 1px rgba(110,110,110,.6);'>" + match + "</span>";
+      });
+    } // highlight
   };
 })();
 // document.addEventListener("DOMContentLoaded", () => Formatter.init(), false);

@@ -1,10 +1,15 @@
 /**
- * Code Formatter - Version 0.2
+ * Code Formatter - Version 0.4
  * Soni D.
  */
 
 var Formatter = (function () {
-  var g = {
+  var keywords = { /* Keywords of Programming Languages */
+     c          : "auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while",
+     java       : "abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|iplements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while",
+     javascript : ""
+  };
+  var g = { /* Global variable */
     name          : "pre.codeBlock", /* HTMLElement <pre> and class [codeBlock] */
     blocks        : [], /* List of <pre> blocks */
     cssCodeFont   : "font-family:Monospace; font-size:14px;",
@@ -16,6 +21,13 @@ var Formatter = (function () {
     reComments    : "//[ ]*.*[ ]*[\r\n]"   // Comments in the kind of //...
                   + "|/\\*[ ]*.*[ ]*\\*/" // Comments in the kind of /* .. */
                   + "|/\\*([ ]*.*[ ]*[\r\n])+[ ]*\\*/", // Many lines comments /** .. */
+    langs         : ["c","java","javascript"], /* Programming Languages */
+    reLangs       : { /* RegExp for Programming Languages */
+       c          : "(\\b(" + keywords.c    + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))" + "|#include",
+       java       : "(\\b(" + keywords.java + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))",
+       javascript : null
+    },
+    bgColors      : ["#DF7401","#2E64FE","#FA58F4","#4B8A08","#F78181","#6E6E6E"],
   };
   return {
     init : function () {
@@ -63,7 +75,7 @@ var Formatter = (function () {
           TD.setAttribute("style", tmp);
           TR.appendChild(TD);
           TAB.appendChild(TR);
-        } // END-for
+        } // END-for (lines)
         parentNode.insertBefore(TAB, g.blocks[i]);
         TAB.setAttribute("style", g.cssCodeNumTAB + g.cssCodeFont);
         g.blocks[i].setAttribute("style", g.cssCodeFrame + g.cssCodeFont);
@@ -75,9 +87,54 @@ var Formatter = (function () {
         strCode = strCode.replace(re, function (match, p, offset, string) {
           return "<span style='color:#40ff00;'>" + match + "</span>";
         });
+        /* Highlights lines or keywords of specified programming language */
+        strCode = this.highlight(strCode, g.blocks[i].getAttribute("class"));
+        // Returns formatted code
         g.blocks[i].innerHTML = strCode;
-      } // END-for
+      } // END-for (code blocks)
     }, // format
+    /**
+     *
+     * @returns Formatted code with some lines and keywords highlighted
+     */
+    highlight : function (strCode /* string */, strAt /* string attributes */) {
+      var arr = strAt.split(" ");
+      var j, k, m, re = nums = lines = null;
+      if ( arr.length < 2 ) return strCode;
+      /* Highlight keywords */
+      j = 0;
+      outer_loop: while ( j < arr.length ) {
+        k = 0;
+        inner_loop: while ( arr[j] !== g.langs[k] && k < g.langs.length ) { k += 1; }
+        if ( arr[j] === g.langs[k] ) { break outer_loop; }
+        j += 1;
+      }
+      if ( j < arr.length && k < g.langs.length ) {
+        re = new RegExp(g.reLangs[g.langs[k]], "g");
+        strCode = strCode.replace(re, function (match, p, offset, string) {
+          return "<span style='color:#FFFF00; font-weight:600; text-shadow:0 1px rgba(110,110,110,.6);'>" + match + "</span>";
+        });
+      }
+      /* Highlight certain lines */
+      arr = strAt.match(/{(\d,?)+}/g); // Match any pattern such as: {1}, {2,3}, {4,5,6}
+      lines = strCode.split(/\r?\n|\r/g); // Break string into many lines, and store them to array
+      if ( !arr || arr.length === 0 ) return strCode; // Array for exmaple {2,3}
+      for ( j = 0; j < arr.length; ++j ) {
+        nums = arr[j].substr(1, arr[j].length-2).split(","); // Convert '{2,3}' to array ['2','3']
+        if ( !nums || nums.length < 1 ) {
+          return strCode;
+          break;
+        }
+        for ( k = 0; k < nums.length; ++k ) {
+          m = parseInt(nums[k])-1;
+          lines[m] = "<span style='background-color:" + g.bgColors[j] + ";'>" + lines[m] + "</span>";
+        }
+      }
+      strCode = lines.join("\r\n");
+      // Returns highlighted code
+      arr = re = nums = lines = null;
+      return strCode;
+    } // highlight
   };
 })();
 // document.addEventListener("DOMContentLoaded", () => Formatter.init(), false);
