@@ -27,7 +27,7 @@ var Formatter = (function () {
        java       : "(\\b(" + keywords.java + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))",
        javascript : null
     },
-    bgColors      : ["#DF7401","#2E64FE","#FA58F4","#4B8A08","#F78181","#6E6E6E"],
+    bgColors      : ["#FA5858","#DF7401","#2E64FE","#FA58F4","#4B8A08","#F78181","#6E6E6E"],
   };
   return {
     init : function () {
