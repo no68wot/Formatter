@@ -115,9 +115,9 @@ int main(void) {
                                                                   * Kommentar
                                                                   */<span style="color:red;">&lt;/span&gt;</span>
           </pre>
-          Dadurch wird wegen <span style="color:red;">&lt;span style="background-color:red;"&gt;</span> nicht nur 
-          die 1te Zeile, sondern alle Zeilen im gesamten Kommentarblock gef&auml;rbt.<br />
-          &rarr; Das ist Bug.
+          Dadurch wird der gesamte Kommentarblock vom <span style="color:red;">&lt;span style="background-color:red;"&gt;</span> ..
+          <span style="color:red;">&lt;/span&gt;</span> umgeben und nicht nur die 1te Zeile allein. Obwohl man nur die 1te Zeile
+          markiert haben will &rarr; Bug.
       </li>
     </ul>
   </li>
