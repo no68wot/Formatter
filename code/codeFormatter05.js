@@ -127,14 +127,13 @@ var Formatter = (function () {
           break;
         }
         for ( k = 0; k < nums.length; ++k ) {
-          m = parseInt(nums[k])-1;
-          
-          if ( lines[m].search(/\/\*\*?[ ]*$/g) != -1 ) {
-            console.log("Yeah");
-            console.log(lines[m]);
+          m = parseInt(nums[k])-1;          
+          re = /\/\*\*?[ ]*$|^\s+\*\s*(?!\/)/g;
+          // Selektiere Zeilen, die 1te Zeile des mehrzeiligen Kommentarblocks enthalten.
+          if ( lines[m].search(re) != -1 ) { // RegExp pattern: /*[line-end] oder /**[line-end]
+            // RegExp pattern: <span style='color:#..;'>/*[line-end] oder <span style='color:#..;'>/** [line-end]
           }
-
-          lines[m] = "<span style='background-color:" + g.bgColors[j] + ";'>" + lines[m] + "</span>";
+          lines[m] = "<span style='background-color:" + g.bgColors[j] + ";'>" + lines[m] + "</span></span>";
         }
       }
       strCode = lines.join("\r\n");
