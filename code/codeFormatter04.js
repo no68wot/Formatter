@@ -20,7 +20,7 @@ var Formatter = (function () {
     // Escape star sign (*) with double-backslash, i.e. * is like \\*
     reComments    : "//[ ]*.*[ ]*[\r\n]"   // Comments in the kind of //...
                   + "|/\\*[ ]*.*[ ]*\\*/" // Comments in the kind of /* .. */
-                  + "|/\\*([ ]*.*[ ]*[\r\n])+[ ]*\\*/", // Many lines comments /** .. */
+                  + "|/\\*([ ]*.*[ ]*(\r?\n|\r)[ ]*\\*)+\\*?/", // Many lines comments /** .. */
     langs         : ["c","java","javascript"], /* Programming Languages */
     reLangs       : { /* RegExp for Programming Languages */
        c          : "(\\b(" + keywords.c    + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))" + "|#include",

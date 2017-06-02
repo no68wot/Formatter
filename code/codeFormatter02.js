@@ -15,7 +15,7 @@ var Formatter = (function () {
     // Escape star sign (*) with double-backslash, i.e. * is like \\*
     reComments    : "//[ ]*.*[ ]*[\r\n]"   // Comments in the kind of //...
                   + "|/\\*[ ]*.*[ ]*\\*/" // Comments in the kind of /* .. */
-                  + "|/\\*([ ]*.*[ ]*[\r\n])+[ ]*\\*/", // Many lines comments /** .. */
+                  + "|/\\*([ ]*.*[ ]*(\r?\n|\r)[ ]*\\*)+\\*?/", // Many lines comments /** .. */
   };
   return {
     init : function () {

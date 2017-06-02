@@ -7,7 +7,7 @@
   <meta http-equiv="expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" /> 
   <style type="text/css"><</style>
-  <script type="text/javascript" src="codeFormatter4.js"></script>
+  <script type="text/javascript" src="codeFormatter5.js"></script>
   <title>Source code formatter</title>
 <body>
 
@@ -22,14 +22,14 @@
 
 <h3><a name="ver04">Version 0.4</a></h3>
 
-<pre class="codeBlock {1} {2} {3} {4}">
+<pre class="codeBlock {2,3} {4}">
 <div>Container
   <span>Text- und Inline-Element</span>
   <p>Paragraph</p>
 </div>
 </pre>
 
-<pre class="codeBlock {1,2} java {6,7,8}">
+<pre class="codeBlock {3,4} java {6,7,8}">
 /**
  * Java - Main method
  */
@@ -42,18 +42,86 @@ public class HelloWorld extends SuperHello
 }
 </pre>
 
-<pre class="codeBlock {4,5} c {7,8} {9,10}">
-/*
+<pre class="codeBlock  {8,9} c">
+/**
  * C program
  */
 #include <stdio.h>
-#include <string.h>
-
+#include <string.h> /*
+                     * Header file
+                     */
 int main(void) {
   printf("Hello World!\n");
   return 0; // 0 for true
 }
 </pre>
+
+<ul>
+  <li><span style="color:blue;">Hervorhebung der Zeilen</span>. Man weist dem <code>class</code>-Attribut 
+    des <code>pre</code>-Tags zus&auml;tzlich die Werte der Form: <code>{3}</code>, <code>{2,5}</code> oder
+    <code>{1} {2,5}</code> usw. zu. Die Nummern innerhalb einer gemeinsamen Klammern <code>{}</code> gehören
+    zur gleichen Gruppe. Diese Nummern geben die Zeilen an, die gef&auml;rbt bzw. hervorgehoben werden.
+    Gleiche Gruppe bedeutet gleiche Farbe. M&ouml;chte man verschiedene Farben f&uuml;r die Hervorhebung 
+    erreichen, fasst man die Nummern in verschiedenen Gruppen (verschiedenen Klammern <code>{}</code> zusammen.
+    Beispiel:
+    <pre>
+      &lt;pre class="codeBlock java <span style="color:red;">{1,2} {3,4}</span>"&gt;public class Main 
+      {
+        ...
+      }
+      &lt;/pre&gt;</pre>
+    <code><span style="color:red;">{1,2} {3,4}</span></code> bedeutet: Es gibt zwei Gruppen (Zeilen 1,2 und
+    Zeilen 3,4). Zeile 1 und 2 haben gleiche Farbe. Zeile 3 und 4 haben gleiche Farbe. Aber Farbe von Zeilen 1,2
+    ist NICHT gleich der Farbe von 3,4.<p></p>
+    Mit dem RegExp-Ausdruck
+    <pre>    /{(\d,?)+}/g</pre>
+    wird nach den Mustern <code>{1}</code>, <code>{1,2}</code> oder mehr <code>{1,2,3}</code> gesucht.
+    Dabei bedeutet <code>\d</code> irgendeine Dezimalzahl. <code>(\d,?)</code> bedeutet entweder nur eine Dezimalzahl
+    oder eine Dezimalzahl gefolgt von einem Komma (<code>,</code>), die runden Klammern bedeutet nur Gruppierung bzw.
+    Zusasmmenfassung. <code>(\d,?)+</code> bedeutet entweder nur eine Zahl oder mehrere Zahlen jeweils getrennt durch 
+    Kommata/Kommas.
+  </li>
+  <li><span style="color:red;">Es gibt einen Bug</span>. d.h. markiert man NUR die 1te Zeile eines <i>mehrzeiligen</i>
+    Kommentars markieren/hervorheben, werden aber alle nachfolgenden Zeilen innerhalb dieses Kommentars ungewollt mit 
+    markiert.<p></p>
+    <b>Beispiel</b>: Man m&ouml;chte nur die 1te Zeile des folgenden Codeblocks markieren.<br />
+    <img src="imgs/codeFormatter4Bug0.png" /><br />
+    Die entsprechende Syntax daf&uuml;r lautet:  
+    <pre>   &lt;pre class="codeBlock c <span style="color:red;">{1}</span>"&gt;...&lt;/pre&gt;</pre>
+    Nicht nur die 1te Zeile (wie gew&uuml;nscht !) des <i>mehrzeiligen</i> Kommentars wird markiert, sondern alle 
+    nachfolgenden Zeilen innerhalb des Kommentars werden ebenfalls markiert.<br />
+    <img src="imgs/codeFormatter4Bug1.png" /><br />
+    Die Ursache dieses Bugs ist wie folgt:<br />
+    <ul>
+      <li>Bei der Angabe von <code>&lt;pre class="codeBlock"&gt;...&lt;/pre&gt;</code> wird unmittelbar "vor" und 
+          "nach" dem mehrzeiligen Kommentarblock <code>/* .. */</code> bzw. <code>/** .. */</code> den HTML-Tag
+          <code>&lt;span style="color:green;"&gt;..&lt;/span&gt;</code> hinzugef&uuml;gt, d.h.
+          <pre>  <span style="color:green;">&lt;span style="color:green;"&gt;</span>/*
+                              * Kommentar
+                              */<span style="color:green;">&lt;/span&gt;</span>
+          </pre>
+      </li>
+      <li>Bei der Angabe des Attributswerts f&uuml;r die zu markierende Zeile, hier Zeile 1, durch:
+          <pre>   &lt;pre class="codeBlock c <span style="color:red;">{1}</span>"&gt;...&lt;/pre&gt;</pre>
+          wird die 1te Zeile des obigen Kommentarblocks mit <code><span style="color:green;">&lt;span&gt;</span></code>-Tag 
+          durch einen &auml;&szlig;eren <code><span style="color:red;">&lt;span&gt;</span></code>-Tag umgeben.
+          <pre>  <span style="color:red;">&lt;span style="background-color:red;"&gt;</span><span style="color:green;">&lt;span style="color:green;"&gt;</span>/*<span style="color:red;">&lt;/span&gt;</span>
+                                                                  * Kommentar
+                                                                  */<span style="color:green;">&lt;/span&gt;</span>
+          </pre>
+          Diese Anordnung der (&auml;u&szlig;eren und inneren) <code>&lt;span&gt;</code>-Tags wird vom Computer
+          f&auml;lschlicherweise wie folgt "wahrgenommen":
+          <pre>  <span style="color:red;">&lt;span style="background-color:red;"&gt;</span><span style="color:green;">&lt;span style="color:green;"&gt;</span>/*<span style="color:green;">&lt;/span&gt;</span>
+                                                                  * Kommentar
+                                                                  */<span style="color:red;">&lt;/span&gt;</span>
+          </pre>
+          Dadurch wird wegen <span style="color:red;">&lt;span style="background-color:red;"&gt;</span> nicht nur 
+          die 1te Zeile, sondern alle Zeilen im gesamten Kommentarblock gef&auml;rbt.<br />
+          &rarr; Das ist Bug.
+      </li>
+    </ul>
+  </li>
+</ul>
 
 <h3><a name="ver03">Version 0.3</a></h3>
 
@@ -78,12 +146,13 @@ public class HelloWorld extends SuperHello
 </pre>
 
 <pre class="codeBlock c">
-/*
+/**
  * C program
  */
 #include <stdio.h>
-#include <string.h>
-
+#include <string.h> /*
+                     * Header file
+                     */
 int main(void) {
   printf("Hello World!\n");
   return 0; // 0 for true
@@ -93,7 +162,7 @@ int main(void) {
 <ul>
   <li>Anzeigen von Zeilennummer.</li>
   <li>Farbige Formatierung.</li>
-  <li>Unterst&uuml;tzung ein- und mehrzeiliger Kommentare:
+  <li><span style="color:blue;">Unterst&uuml;tzung ein- und mehrzeiliger Kommentare</span>:
     <ul style="font-family:Monospace; font-size:14px; color:#40F000;">
       <li>/**<br />
            &nbsp;* Mehrzeiliger Kommentar<br />
@@ -137,11 +206,20 @@ int main(void) {
       Jedes Vorkommen des Zeichens &lt; im  String wird durch <code>&amp;lt;</code> ersetzt.<br />
   </li>
   <li><span style="color:blue;">Hervorhebung von Keywords wird unterstützt</span>:
+    Um die Keyword-Hervorhebung f&uuml;r eine bestimmte Programmiersprache, z.B. Java (oder C), zu aktivieren, 
+    weist man dem <code>class</code>-Attribut des <code>pre</code>-Tags zus&auml;tzlich den Wert 
+    <code style="color:red;">java</code> (oder <code>c</code>) zu. Beispiel:
     <pre>
-       re = "(\\b(" + keywords  + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))|#include"
-    </pre>
-    Oben ist z.B. der RegExp f&uuml;r zum Erkennen von Keywords von C, wobei <code>keywords</code> ein 
-    Platzhalter f&uuml;r die Keywords von C wie <code>auto|break|case|char|int|..</code><br />
+      &lt;pre class="codeBlock <span style="color:red;">java</span>"&gt;
+        public class Main
+        {
+          ...
+        }
+      &lt;/pre&gt;</pre>
+    Dementsprechend werden die Keywords von Java formatiert und hervorgehoben.
+    <pre>     re = "(\\b(" + keywords  + ")\\b)(?=.*(;|(\r?\n|\r)?{|}))|#include"</pre>
+    Oben ist z.B. der RegExp f&uuml;rs Erkennen von Keywords von C (f&uuml;r Java analog), wobei <code>keywords</code> 
+    ein Platzhalter f&uuml;r die Keywords von C wie <code>auto|break|case|char|int|..</code> ist.
     Die beiden <code>\\b</code> (bzw. <code>\b</code>) bedeutet <code>Wortgrenze</code>, d.h. nur allein
     stehende Keywords werden akzeptiert. Keywords, die als Substring in einem anderen String enthalten sind,
     werden NICHT akzeptiert, z.B. das <code><b>int</b></code> innerhalb von <code>pr<b>int</b>f</code> soll NICHT
@@ -188,7 +266,7 @@ int main(void) {
 <ul>
   <li>Anzeigen von Zeilennummer.</li>
   <li>Farbige Formatierung.</li>
-  <li>Unterst&uuml;tzung ein- und mehrzeiliger Kommentare:
+  <li><span style="color:blue;">Unterst&uuml;tzung ein- und mehrzeiliger Kommentare</span>:
     <ul style="font-family:Monospace; font-size:14px; color:#40F000;">
       <li>/**<br />
            &nbsp;* Mehrzeiliger Kommentar<br />
